@@ -28,6 +28,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Você pode enviar sua foto usando a camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Você pode conversar usando seu microfone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Você pode enviar sua foto usando a biblioteca de imagens</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
