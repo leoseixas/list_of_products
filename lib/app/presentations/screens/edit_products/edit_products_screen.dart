@@ -1,27 +1,30 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:list_of_products/app/domain/entities/products.dart';
+import 'package:list_of_products/app/presentations/screens/edit_products/edit_products_controller.dart';
 import 'package:list_of_products/app/presentations/screens/home/home_screen.dart';
-import 'package:list_of_products/app/presentations/screens/register_products/register_products_controller.dart';
 import 'package:list_of_products/app/presentations/widgets/custom_text_field_widget.dart';
 import 'package:list_of_products/app/presentations/widgets/information_error_widget.dart';
 import 'package:provider/provider.dart';
 
-class RegisterProductsScreen extends StatefulWidget {
-  const RegisterProductsScreen({Key key}) : super(key: key);
+class EditProductsScreen extends StatefulWidget {
+  final Products products;
+
+  const EditProductsScreen({Key key, this.products}) : super(key: key);
 
   @override
-  _RegisterProductsScreenState createState() => _RegisterProductsScreenState();
+  _EditProductsScreenState createState() => _EditProductsScreenState();
 }
 
-class _RegisterProductsScreenState extends State<RegisterProductsScreen> {
+class _EditProductsScreenState extends State<EditProductsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       final controller =
-          Provider.of<RegisterProductsController>(context, listen: false);
-      await controller.clearControllers();
+          Provider.of<EditProductsController>(context, listen: false);
+      controller.initialize(widget.products);
     });
   }
 
@@ -29,24 +32,19 @@ class _RegisterProductsScreenState extends State<RegisterProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Consumer<RegisterProductsController>(
-          builder: (context, value, child) {
-            return GestureDetector(
-              onTap: () {
-                value.clearControllers();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-              child: Icon(Icons.arrow_back),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ),
             );
           },
+          child: Icon(Icons.arrow_back),
         ),
-        title: const Text('Cadastro de Produtos'),
+        title: const Text('Editar produto'),
       ),
-      body: Consumer<RegisterProductsController>(
+      body: Consumer<EditProductsController>(
         builder: (context, value, child) {
           return SingleChildScrollView(
             child: Container(
@@ -108,9 +106,27 @@ class _RegisterProductsScreenState extends State<RegisterProductsScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.all(15),
-                      child: value.isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Cadastrar'),
+                      child: Text('Editar'),
+                    ),
+                  ),
+                  const SizedBox(height: 70),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.red),
+                    ),
+                    onPressed: () async {
+                      final result = await value.onPressedDeleteProduct();
+                      if (result) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      child: Text('Excluir'),
                     ),
                   ),
                 ],

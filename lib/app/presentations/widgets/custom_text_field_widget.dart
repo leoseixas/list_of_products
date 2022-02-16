@@ -23,7 +23,7 @@ class CustomTextFieldWidget extends StatelessWidget {
       controller: controller,
       keyboardType: textInputType,
       decoration: InputDecoration(
-        hintText: hintText,
+        labelText: hintText,
         errorText: errorText,
         fillColor: fillColor,
         filled: true,

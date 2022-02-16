@@ -9,6 +9,8 @@ abstract class ProductGateway {
       ProductsSerializer productsSerializer);
 
   Future<List<ProductsSerializer>> getListProducts();
+
+  Future<bool> deleteProduct(String id);
 }
 
 class ProductGatewayImpl implements ProductGateway {
@@ -36,14 +38,14 @@ class ProductGatewayImpl implements ProductGateway {
     productObject.set<ParseUser>(keyProductUserId, parseUser);
 
     final response = await productObject.save();
-    if (response.success == true) {
+    if (response.success) {
       return const Right(true);
     }
 
     String error = '';
     error = await Future.error(ParseErrors.getDescription(response.error.code));
 
-    return Left(error);
+    throw Left(error);
   }
 
   @override
@@ -63,7 +65,27 @@ class ProductGatewayImpl implements ProductGateway {
     } else if (response.success && response.results == null) {
       return [];
     } else {
-      throw ProductErrorList(message: 'Erro ao carregar lista');
+      String error = '';
+      error =
+          await Future.error(ParseErrors.getDescription(response.error.code));
+
+      throw error;
+    }
+  }
+
+  @override
+  Future<bool> deleteProduct(String id) async {
+    final parseObject = ParseObject(keyProductTable)..set(keyProductId, id);
+
+    final response = await parseObject.delete();
+
+    if (response.success) {
+      return true;
+    } else {
+      String error =
+          await Future.error(ParseErrors.getDescription(response.error.code));
+
+      throw error;
     }
   }
 }

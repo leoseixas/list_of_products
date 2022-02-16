@@ -14,6 +14,16 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+      final controller =
+          Provider.of<RegisterController>(context, listen: false);
+      await controller.clearController();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -45,6 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Senha',
                   controller: value.passwordController,
                   textInputType: TextInputType.visiblePassword,
+                  obscureText: true,
                   errorText: value.errorText(
                       value.passwordIsValid, value.passwordError),
                 ),
@@ -53,6 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Senha novamente',
                   controller: value.confirmPasswordController,
                   textInputType: TextInputType.visiblePassword,
+                  obscureText: true,
                   errorText: value.errorText(
                       value.confirmPasswordIsValid, value.confirmPasswordError),
                 ),

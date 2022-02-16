@@ -8,6 +8,7 @@ abstract class UserGateway {
   Future<UserSerializer> signUpUser(UserSerializer userSerializer);
   Future<Either<String, UserSerializer>> loginWithEmail(
       UserSerializer userSerializer);
+  Future<bool> logout();
 }
 
 class UserGatewayImpl implements UserGateway {
@@ -37,6 +38,19 @@ class UserGatewayImpl implements UserGateway {
 
     if (response.success) {
       return Right(UserSerializer.mapParseToUser(response.result));
+    } else {
+      String messageError =
+          await Future.error(ParseErrors.getDescription(response.error.code));
+      throw messageError;
+    }
+  }
+
+  @override
+  Future<bool> logout() async {
+    final ParseUser user = await ParseUser.createUser();
+    final response = await user.logout();
+    if (response.success) {
+      return true;
     } else {
       String messageError =
           await Future.error(ParseErrors.getDescription(response.error.code));

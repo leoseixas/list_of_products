@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:list_of_products/app/core/erros.dart';
 import 'package:list_of_products/app/domain/entities/products.dart';
 import 'package:list_of_products/app/domain/repositories/product_repository.dart';
 
 abstract class ProductService {
-  Future<Either<FailureProduct, bool>> saveProduct(Products products);
+  Future<Either<String, bool>> saveProduct(Products products);
+  Future<Either<String, bool>> deleteProduct(String id);
 
-  Future<Either<FailureProduct, List<Products>>> getListProdutcs();
+  Future<Either<String, List<Products>>> getListProdutcs();
 }
 
 class ProductServiceImpl implements ProductService {
@@ -15,22 +15,22 @@ class ProductServiceImpl implements ProductService {
   ProductServiceImpl({this.productRepository});
 
   @override
-  Future<Either<FailureProduct, bool>> saveProduct(Products products) async {
+  Future<Either<String, bool>> saveProduct(Products products) async {
     final result = await productRepository.saveProducts(products);
     bool success = false;
-    FailureProduct productErrorSave = ProductErrorSave(message: '');
-    result.fold((l) => productErrorSave = l, (r) => success = r);
+    String messageError;
+    result.fold((l) => messageError = l, (r) => success = r);
     if (result.isRight()) {
       return Right(success);
     } else {
-      return Left(productErrorSave);
+      return Left(messageError);
     }
   }
 
   @override
-  Future<Either<FailureProduct, List<Products>>> getListProdutcs() async {
+  Future<Either<String, List<Products>>> getListProdutcs() async {
     List<Products> newProducts = [];
-    FailureProduct errorMessage = ProductErrorList(message: '');
+    String errorMessage;
     final result = await productRepository.getListProducts();
     result.fold(
       (l) => {errorMessage = l},
@@ -41,6 +41,19 @@ class ProductServiceImpl implements ProductService {
       return Right(newProducts);
     } else {
       return Left(errorMessage);
+    }
+  }
+
+  @override
+  Future<Either<String, bool>> deleteProduct(String id) async {
+    final result = await productRepository.deleteProdcuts(id);
+    bool success = false;
+    String messageError;
+    result.fold((l) => messageError = l, (r) => success = r);
+    if (result.isRight()) {
+      return Right(success);
+    } else {
+      return Left(messageError);
     }
   }
 }

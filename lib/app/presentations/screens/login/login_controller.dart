@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:list_of_products/app/core/erros.dart';
 import 'package:list_of_products/app/domain/entities/user.dart';
 import 'package:list_of_products/app/domain/entities/validate.dart';
 import 'package:list_of_products/app/domain/services/user_service.dart';
 import 'package:list_of_products/app/presentations/screens/login/login_validate.dart';
-import 'package:list_of_products/app/presentations/screens/register_user/register_controller.dart';
 
 class LoginController with ChangeNotifier {
   final UserServiceImpl userServiceImpl;
@@ -96,15 +94,8 @@ class LoginController with ChangeNotifier {
     return success;
   }
 
-  void clearControllersRegister() {
-    RegisterController registerController =
-        RegisterController(userServiceImpl: userServiceImpl);
-
-    registerController.nameController.text = '';
-    registerController.emailController.text = '';
-    registerController.passwordController.text = '';
-    registerController.confirmPasswordController.text = '';
-    registerController.showError = false;
-    registerController.success = false;
+  void clearControllers() {
+    emailController.text = '';
+    passwordController.text = '';
   }
 }

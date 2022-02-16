@@ -5,4 +5,6 @@ abstract class UserRepository {
   Future<Either<Exception, User>> singUpUser(User user);
 
   Future<Either<String, User>> loginWithEmail(User user);
+
+  Future<Either<String, bool>> logout();
 }

@@ -5,6 +5,7 @@ import 'package:list_of_products/app/data/repository/product_repository_impl.dar
 import 'package:list_of_products/app/data/repository/user_repository_impl.dart';
 import 'package:list_of_products/app/domain/services/product_service.dart';
 import 'package:list_of_products/app/domain/services/user_service.dart';
+import 'package:list_of_products/app/presentations/screens/edit_products/edit_products_controller.dart';
 import 'package:list_of_products/app/presentations/screens/home/home_controller.dart';
 import 'package:list_of_products/app/presentations/screens/login/login_controller.dart';
 import 'package:list_of_products/app/presentations/screens/login/login_screen.dart';
@@ -68,6 +69,13 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => HomeController(
+            productServiceImpl:
+                Provider.of<ProductServiceImpl>(_, listen: false),
+            userServiceImpl: Provider.of<UserServiceImpl>(_, listen: false),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => EditProductsController(
               productServiceImpl:
                   Provider.of<ProductServiceImpl>(_, listen: false)),
         ),

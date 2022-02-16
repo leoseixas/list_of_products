@@ -123,4 +123,11 @@ class RegisterController with ChangeNotifier {
     notifyListeners();
     return success;
   }
+
+  void clearController() {
+    nameController.text = '';
+    emailController.text = '';
+    passwordController.text = '';
+    confirmPasswordController.text = '';
+  }
 }

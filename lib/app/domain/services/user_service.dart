@@ -8,6 +8,7 @@ abstract class UserService {
   Future<Either<Exception, bool>> signUpUser(User user);
 
   Future<Either<String, bool>> loginWithEmail(User user);
+  Future<Either<String, bool>> logout();
 }
 
 class UserServiceImpl implements UserService {
@@ -46,6 +47,24 @@ class UserServiceImpl implements UserService {
     );
     if (result.isRight()) {
       return Right(true);
+    } else {
+      return Left(messsageError);
+    }
+  }
+
+  @override
+  Future<Either<String, bool>> logout() async {
+    final result = await repository.logout();
+    String messsageError;
+    bool success;
+    result.fold(
+      (l) => {
+        messsageError = l,
+      },
+      (r) => {success = r},
+    );
+    if (success) {
+      return Right(success);
     } else {
       return Left(messsageError);
     }

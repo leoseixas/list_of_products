@@ -15,6 +15,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+      final controller = Provider.of<LoginController>(context, listen: false);
+      await controller.clearControllers();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -64,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: value.passwordController,
                           textInputType: TextInputType.visiblePassword,
                           fillColor: Colors.white38,
+                          obscureText: true,
                           errorText: value.errorText(
                               value.passwordIsValid, value.passwordError),
                         ),
@@ -73,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                value.clearControllersRegister();
+                                // value.clearControllersRegister();
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>

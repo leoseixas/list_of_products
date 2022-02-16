@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:list_of_products/app/domain/entities/products.dart';
-import 'package:list_of_products/app/domain/entities/storage_user.dart';
 import 'package:list_of_products/app/domain/entities/validate.dart';
 import 'package:list_of_products/app/domain/services/product_service.dart';
-import 'package:list_of_products/app/presentations/screens/register_products/register_products_validate.dart';
+import 'package:list_of_products/app/presentations/screens/edit_products/edit_products_validate.dart';
 
-class RegisterProductsController with ChangeNotifier {
+class EditProductsController with ChangeNotifier {
   final ProductServiceImpl productServiceImpl;
-  RegisterProductsController({this.productServiceImpl});
-
+  Products productsEdit;
   Validate validate = Validate();
-  RegisterProductsValidate registerProductsValidate =
-      RegisterProductsValidate();
+  EditProductsValidate editProductsValidate = EditProductsValidate();
+
+  EditProductsController({this.productServiceImpl, this.productsEdit});
 
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
   final priceController = TextEditingController();
   final fabricatorController = TextEditingController();
+
+  void initialize(Products products) {
+    nameController.text = products.name;
+    descriptionController.text = products.description;
+    priceController.text = products.price.toString();
+    fabricatorController.text = products.fabricator;
+    productsEdit = products;
+  }
 
   String messageError = '';
 
@@ -48,28 +55,28 @@ class RegisterProductsController with ChangeNotifier {
       _nameIsValid && _descriptionIsValid && priceIsValid && _fabricatorIsValid;
 
   void nameValid(String name) {
-    validate = registerProductsValidate.validatingName(name);
+    validate = editProductsValidate.validatingName(name);
     _nameError = validate.description;
     _nameIsValid = validate.valid;
     notifyListeners();
   }
 
   void descriptionValid(String description) {
-    validate = registerProductsValidate.validatingDescription(description);
+    validate = editProductsValidate.validatingDescription(description);
     _descriptionError = validate.description;
     _descriptionIsValid = validate.valid;
     notifyListeners();
   }
 
   void priceValid(String price) {
-    validate = registerProductsValidate.validatingPrice(price);
+    validate = editProductsValidate.validatingPrice(price);
     _priceError = validate.description;
     _priceIsValid = validate.valid;
     notifyListeners();
   }
 
   void fabricatoValid(String fabricato) {
-    validate = registerProductsValidate.validatingFabricator(fabricato);
+    validate = editProductsValidate.validatingFabricator(fabricato);
     _fabricatorError = validate.description;
     _fabricatorIsValid = validate.valid;
     notifyListeners();
@@ -102,11 +109,12 @@ class RegisterProductsController with ChangeNotifier {
 
   Future<bool> onPressed() async {
     Products products = Products(
+      id: productsEdit.id,
       name: nameController.text,
       description: descriptionController.text,
       price: price,
       fabricator: fabricatorController.text,
-      user: StorageUser.user,
+      user: productsEdit.user,
     );
     validatingFields();
     if (isFormValid()) {
@@ -130,15 +138,29 @@ class RegisterProductsController with ChangeNotifier {
     isLoading = false;
     print(success);
     notifyListeners();
-    dispose();
     return success;
   }
 
-  void clearControllers() {
-    nameController.text == ' ';
-    descriptionController.text == ' ';
-    priceController.text == ' ';
-    fabricatorController.text == ' ';
-    showError = false;
+  Future<bool> onPressedDeleteProduct() async {
+    isLoading = true;
+    notifyListeners();
+    final result = await productServiceImpl.deleteProduct(productsEdit.id);
+    result.fold(
+      (l) => {
+        messageError = l,
+        showError = true,
+        success = false,
+        notifyListeners(),
+      },
+      (r) => {
+        success = r,
+        if (success) {showError = false} else {showError = true},
+        notifyListeners(),
+      },
+    );
+    isLoading = false;
+    print(success);
+    notifyListeners();
+    return success;
   }
 }

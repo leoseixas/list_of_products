@@ -59,4 +59,14 @@ class UserRepositoryImpl implements UserRepository {
       return Left(e);
     }
   }
+
+  @override
+  Future<Either<String, bool>> logout() async {
+    try {
+      final result = await gateway.logout();
+      return Right(result);
+    } catch (e) {
+      return Left(e);
+    }
+  }
 }
