@@ -109,6 +109,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-//testevoalle@gmail.com
-//12345678voalle
